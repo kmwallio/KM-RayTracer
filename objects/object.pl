@@ -22,7 +22,7 @@ sub new {
 	};
 	
 	# Print output to consle
-	print "Created new " . $class .".\n";
+	print "Created new " . $class . ".\n";
 	
 	bless $self, $class;
 	return $self;

@@ -6,3 +6,7 @@ An example ray tracing program written in Perl for CSE 4280 (Graphical Algorithm
 
 * Perl
 * Gtk2-Perl
+
+## Other Notes
+
+This program was tested on Debian 5 (Lenny).  Perl and Gtk2-Perl should be installed by default on Debian and/or Ubuntu.
