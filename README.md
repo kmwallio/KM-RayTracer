@@ -12,13 +12,14 @@ An example ray tracing program written in Perl for CSE 4280 (Graphical Algorithm
 1. Install Perl and Gtk2-Perl if you haven't done so already.
 2. Download KM-RayTracer.
 3. Un-Zip or Un-Tar the archive.
-4. In command line run
+4. In command line run.
 
 	> perl raytracer.pl
 
-5. Or
+5. Or.
 
 	> chmod +x raytracer.pl
+
 	> ./raytracer.pl
 
 ## Other Notes
