@@ -4,8 +4,6 @@
 # Project: Ray Tracing
 
 # Packages to Use
-use strict;
-use warnings;
 use Gtk2 '-init';
 
 # Create our main Window
