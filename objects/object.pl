@@ -13,12 +13,6 @@ sub new {
 		_x	=>	shift,
 		_y	=>	shift,
 		_z	=>	shift,
-		_r	=>	shift,
-		_g	=>	shift,
-		_b	=>	shift,
-		_a	=>	shift,
-		_e	=>	shift,
-		_reflection	=>	shift,
 	};
 	
 	# Print output to consle
@@ -28,6 +22,8 @@ sub new {
 	return $self;
 }
 
+
+# Determines if this object intersects another and returns t.
 sub intersects {
 	
 }

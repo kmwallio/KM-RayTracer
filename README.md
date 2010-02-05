@@ -5,7 +5,7 @@ An example ray tracing program written in Perl for CSE 4280 (Graphical Algorithm
 ## Requirements
 
 * Perl
-* Gtk2-Perl
+* Gtk2-Perl *\* If using the GUI*
 
 ## Installation
 
@@ -15,12 +15,22 @@ An example ray tracing program written in Perl for CSE 4280 (Graphical Algorithm
 4. In command line run.
 
 	> perl raytracer.pl
+	
+	> perl cli.pl
 
 5. Or.
 
 	> chmod +x raytracer.pl
 
 	> ./raytracer.pl
+	
+	> chmod +x cli.pl
+	
+	> ./cli.pl
+
+## RayTracer.pl, CLI.pl, Huh?
+
+RayTracer is the Graphical User Interface.  If you have Gtk2-Perl installed, you can run it and have a fabulous experience.  Otherwise, the ./cli.pl version will run on any system with Perl.  It'll also ask you for different input and output the image to the specified file.
 
 ## Other Notes
 
@@ -32,7 +42,7 @@ You can find instructions for most systems on [GNOME Live!](http://live.gnome.or
 
 ### Running on Linux
 
-Search your distribution's package repositories for gtk2-perl to see if you can install it that way.  If not, 
+Search your distribution's package repositories for gtk2-perl to see if you can install it that way.  If not, you can try compiling it, or just use the CLI version.
 
 ### Running on Mac OS X
 
