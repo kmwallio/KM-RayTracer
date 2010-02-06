@@ -7,5 +7,29 @@
 package Ray;
 
 sub new {
-	my ($class, $xO, $yO, $zO, $xU, $yU, $zU) = @_;
+	my ($class, $xO, $yO, $zO, $xU, $yU, $zU) = @_; #extract args
+	
+	# Get the vector from origin to other point
+	$xT = $xU - $xO;
+	$yT = $yU - $yO;
+	$zT = $zU - $zO;
+	
+	# Normalize the vector...
+	my $divBy = sqrt( ( $xT ** 2 ) + ( $yT ** 2 ) + ( $zT ** 2 ) )
+	$xT = $xT / $divBy;
+	$yT = $yT / $divBy;
+	$zT = $zT / $divBy;
+	
+	# Create object data
+	my $self = {
+		_x0 => $xO,
+		_y0 => $yO,
+		_z0 => $zO,
+		_xT => $xT,
+		_yT => $yT,
+		_zT => $zT
+	}
+	bless $self, $class;
+	return $self;
 }
+1;
