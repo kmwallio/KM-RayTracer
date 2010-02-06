@@ -7,6 +7,7 @@
 # Also used for generating the image.
 package Castor;
 use KMObj::Point;
+use KMObj::Ray;
 
 # The constructor
 sub new {
@@ -105,10 +106,14 @@ sub drawImage {
 	# Now to actually work on the image!
 	my $i = 0; # LCV's
 	my $j = 0;
+	my $curRay = new Ray(0, 0, 0, 1, 1, 1);
+	my $closestObj = new Point(0,0,0); # Place holder point for getting closest point.
+	my $closestT = -1; # Closest point should be in positive area to show on image plane.
 	
-	for( $i = $startY ; $i <= $endY ; $i-- ){ # Outer loop is Y to make writing to PPM Format Easier.
+	for( $i = $startY ; $i >= $endY ; $i-- ){ # Outer loop is Y to make writing to PPM Format Easier.
 		for( $j = $startX ; $j <= $endX ; $j++){
-			
+			$curRay = new Ray($self->{_eye}[0], $self->{_eye}[1], $self->{_eye}[2], $j, $i, 0);
+			$closestObj->intersects($curRay);
 		}
 	}
 }

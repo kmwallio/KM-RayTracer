@@ -15,7 +15,7 @@ sub new {
 	$zT = $zU - $zO;
 	
 	# Normalize the vector...
-	my $divBy = sqrt( ( $xT ** 2 ) + ( $yT ** 2 ) + ( $zT ** 2 ) )
+	my $divBy = sqrt( ( $xT ** 2 ) + ( $yT ** 2 ) + ( $zT ** 2 ) );
 	$xT = $xT / $divBy;
 	$yT = $yT / $divBy;
 	$zT = $zT / $divBy;
@@ -28,8 +28,19 @@ sub new {
 		_xT => $xT,
 		_yT => $yT,
 		_zT => $zT
-	}
+	};
+	
 	bless $self, $class;
 	return $self;
+}
+
+sub getStart {
+	my $self = shift;
+	return [ $self->{_x0} , $self->{_y0} , $self->{_z0} ];
+}
+
+sub getT {
+	my $self = shift;
+	return [ $self->{_xT} , $self->{_yT} , $self->{_zT} ];
 }
 1;
