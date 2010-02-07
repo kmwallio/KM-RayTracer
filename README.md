@@ -54,4 +54,4 @@ The easiest way to run KM-RayTracer on Windows is to download [Camelbox](http://
 
 ### For everything else...
 
-There's always [VirtalBox](http://virtualbox.org "VirtualBox") for virtualizing Ubuntu or Debian or some other operating system with Gtk2-Perl and running it under that.
+There's always [VirtualBox](http://virtualbox.org "VirtualBox") for virtualizing Ubuntu or Debian or some other operating system with Gtk2-Perl and running it under that.
