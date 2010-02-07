@@ -38,30 +38,37 @@ sub intersects {
 		return -1;
 	}
 	
-	if( $rayXT == 0 && $rayYT == 0 ){
+	# Return variable
+	$t = -1;
+	
+	if( $rayXT == 0 && $rayYT == 0 ){ # Only have to find T, ray heading towards point
 		$t = ($self->{_z} - $rayZ) / $rayZT;
-		print "Intersection!\n";
-	}elsif( $rayXT == 0 ){
+	}elsif( $rayXT == 0 ){ # Check Z and Y
 		$ty = ($self->{_y} - $rayY) / $rayYT;
 		$tz = ($self->{_z} - $rayZ) / $rayZT;
 		if($ty == $tz){
-			print "Intesection!\n";
+			$t = $ty;
 		}
-	}elsif( $rayYT == 0 ){
+	}elsif( $rayYT == 0 ){ # Check X and Z
 		$tx = ($self->{_x} - $rayX) / $rayXT;
 		$tz = ($self->{_z} - $rayZ) / $rayZT;
 		if($tx == $tz){
-			print "Intesection!\n";
+			$t = $tx;
 		}
 	}else{ # Eye should always be being 0, so no need to check for z == 0
 		$tx = ($self->{_x} - $rayX) / $rayXT;
 		$ty = ($self->{_y} - $rayY) / $rayYT;
 		$tz = ($self->{_z} - $rayZ) / $rayZT;
 		if($tx == $tz && $tz == $ty){
-			print "Intesection!\n";
+			$t = $tz;
 		}
 	}
 	
-	return 0;
+	return $t;
+}
+
+# Returns the color [R, G, B] of this point.
+sub getColor {
+	return [255, 255, 255];
 }
 1;

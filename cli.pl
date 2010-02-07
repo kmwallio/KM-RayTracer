@@ -13,3 +13,4 @@ print "Oh Yeah!\n";
 my $rayObj = new Castor(200, 200, 0, 0, -250,  0, -250, 0, 0, 0, 0);
 
 $rayObj->drawImage();
+$rayObj->saveImage("/Users/twirp/Programming/Perl/RayTracing/test.ppm");
