@@ -52,6 +52,7 @@ sub intersects {
 	my ($x0,$y0,$z0) = @{$ray->getStart()};
 	my ($xT,$yT,$zT) = @{$ray->getT()};
 	# Do the calculation
+	my $t = -1;
 	eval {
 		$t = -(($a * $x0) + ($b * $y0) + ($z0 * $c) + $d) / (($xT * $a) + ($yT * $b) + ($zT * $c)); # Find t
 	};

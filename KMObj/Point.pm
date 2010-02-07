@@ -70,6 +70,12 @@ sub intersects {
 	return $t;
 }
 
+# Returns orgin point
+sub getOrigin {
+	my $self = shift;
+	return [$self->{_x}, $self->{_y}, $self->{_z}];
+}
+
 # Returns the color [R, G, B] of this point.
 sub getColor {
 	my $self = shift;
