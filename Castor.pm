@@ -12,7 +12,7 @@ use KMObj::Plane;
 
 # The constructor
 sub new {
-	my ($class, $width, $height, $eyeX, $eyeY, $eyeZ, $lightX, $lightY, $lightZ, $lightR, $lightG, $lightB, $aR, $aG, $aB, $bgR, $bgG, $bgB, $bounces) = @_; # Extract args
+	my ($class, $width, $height, $eyeX, $eyeY, $eyeZ, $lightX, $lightY, $lightZ, $lightR, $lightG, $lightB, $aR, $aG, $aB, $pR, $pG, $pB, $bgR, $bgG, $bgB, $bounces) = @_; # Extract args
 	$lightR = $lightR / 100; # We take in a percentage.
 	$lightG = $lightG / 100;
 	$lightB = $lightB / 100;
@@ -27,7 +27,8 @@ sub new {
 		_light => [$lightX, $lightY, $lightZ],
 		_lightIntensity => [$lightR, $lightG, $lightB],
 		_ambientLight	=>	[$aR, $aG, $aB],
-		_background => [$bgR, $bgG, $bgB],
+		_phongLight	=>	[$pR, $pG, $pB],
+		_background =>	[$bgR, $bgG, $bgB],
 		_kmobjs => [],
 		_image => []
 	};

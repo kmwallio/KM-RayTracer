@@ -72,6 +72,7 @@ sub getColor {
 	my @lightI = @{$castor->{_lightIntensity}};
 	my @ambient = @{$castor->{_ambientLight}};
 	my @eyeV = @{$ray->getT()};
+	my @phongC = @{$castor->{_phongLight}};
 	
 	# Calculate normal vector
 	my @norm = (($intPoint[0] - $self->{_x}), ($intPoint[1] - $self->{_y}), ($intPoint[2] - $self->{_z}));
@@ -89,7 +90,11 @@ sub getColor {
 	$nl = ($nl > 0) ? $nl : 0;
 	
 	# Find the reflective light unit vector.
-	my @reflect = (2 * $norm[0] * ($norm[0] * $light[0]) - $light[0], 2 * $norm[1] * ($norm[1] * $light[1]) - $light[1], 2 * $norm[2] * ($norm[2] * $light[2]) - $light[2]);
+	#my @reflect = (2 * $norm[0] * ($norm[0] * $light[0]) - $light[0], 2 * $norm[1] * ($norm[1] * $light[1]) - $light[1], 2 * $norm[2] * ($norm[2] * $light[2]) - $light[2]);
+	my $c = (($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]));
+	my @reflect = (2 * $norm[0] * $c - $light[0], 2 * $norm[1] * $c - $light[1], 2 * $norm[2] * $c - $light[2]);
+	$divBy = sqrt(($reflect[0] ** 2) + ($reflect[1] ** 2) + ($reflect[2] ** 2));
+	@reflect = (($reflect[0] / $divBy), ($reflect[1] / $divBy), ($reflect[2] / $divBy));
 	
 	# Dotted eye and reflect vectors.
 	my $er = ($eyeV[0] * $reflect[0]) + ($eyeV[1] * $reflect[1]) + ($eyeV[2] * $reflect[2]);
@@ -100,12 +105,12 @@ sub getColor {
 	my $red = $self->{_r} * ($ambient[0] + ($lightI[0] * $nl));
 	my $green = $self->{_g} * ($ambient[1] + ($lightI[1] * $nl));
 	my $blue = $self->{_b} * ($ambient[2] + ($lightI[2] * $nl));
-	
+	#print "$red - $green - $blue - $er - $light[0] - $phongC[0]\n";
 	# Phong illumination
-	#my $red = $red + ($light[0] * );
-	#my $green = $green + ($light[1] * );
-	#my $blue = $blue + ($light[2] * );
-	
+	my $red = $red + ($light[0] * $phongC[0] * $er);
+	my $green = $green + ($light[1] * $phongC[1] * $er);
+	my $blue = $blue + ($light[2] * $phongC[2] * $er);
+	#print "$red - $green - $blue\n";
 	return [$red, $green, $blue];
 }
 1;
