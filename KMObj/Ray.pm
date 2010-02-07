@@ -35,11 +35,22 @@ sub new {
 	return $self;
 }
 
+# Returns x_0, or the starting point
 sub getStart {
 	my $self = shift;
 	return [ $self->{_x0} , $self->{_y0} , $self->{_z0} ];
 }
 
+# Returns where it'll be at time T
+sub getPoint {
+	my ($self, $t) = @_;
+	my $x = $self->{_x0} + ($self->{_xT} * $t);
+	my $y = $self->{_y0} + ($self->{_yT} * $t);
+	my $z = $self->{_z0} + ($self->{_zT} * $t);
+	return [$x, $y, $z];
+}
+
+# Returns x_d, or the amount to step by.
 sub getT {
 	my $self = shift;
 	return [ $self->{_xT} , $self->{_yT} , $self->{_zT} ];

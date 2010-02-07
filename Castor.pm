@@ -12,12 +12,21 @@ use KMObj::Plane;
 
 # The constructor
 sub new {
-	my ($class, $width, $height, $eyeX, $eyeY, $eyeZ, $lightX, $lightY, $lightX, $bgR, $bgG, $bgB) = @_; # Extract args
+	my ($class, $width, $height, $eyeX, $eyeY, $eyeZ, $lightX, $lightY, $lightZ, $lightR, $lightG, $lightB, $aR, $aG, $aB, $bgR, $bgG, $bgB, $bounces) = @_; # Extract args
+	$lightR = $lightR / 100; # We take in a percentage.
+	$lightG = $lightG / 100;
+	$lightB = $lightB / 100;
+	$aR = $aR / 100;
+	$aG = $aG / 100;
+	$aB = $aB / 100;
 	my $self = {
 		_width => $width,
 		_height => $height,
+		_bounces => $bounces,
 		_eye => [$eyeX, $eyeY, $eyeZ],
 		_light => [$lightX, $lightY, $lightZ],
+		_lightIntensity => [$lightR, $lightG, $lightB],
+		_ambientLight	=>	[$aR, $aG, $aB],
 		_background => [$bgR, $bgG, $bgB],
 		_kmobjs => [],
 		_image => []
@@ -133,7 +142,7 @@ sub drawImage {
 			}
 			if( $closestT >= 0 ){
 				# If we have an intersection behind the image plane, draw it.
-				push(@{$self->{_image}}, $closestObj->getColor($closestT, $self));
+				push(@{$self->{_image}}, $closestObj->getColor($closestT, $self->{_bounces}, $curRay, $self));
 			}else{
 				# If there's no intersection, use the default background color.
 				push(@{$self->{_image}}, $self->{_background});
