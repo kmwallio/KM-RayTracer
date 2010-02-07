@@ -91,8 +91,10 @@ sub getColor {
 	
 	# Find the reflective light unit vector.
 	#my @reflect = (2 * $norm[0] * ($norm[0] * $light[0]) - $light[0], 2 * $norm[1] * ($norm[1] * $light[1]) - $light[1], 2 * $norm[2] * ($norm[2] * $light[2]) - $light[2]);
-	my $c = (($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]));
-	my @reflect = (2 * $norm[0] * $c - $light[0], 2 * $norm[1] * $c - $light[1], 2 * $norm[2] * $c - $light[2]);
+	#my $c = (($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]));
+	#my @reflect = (2 * $norm[0] * $c - $light[0], 2 * $norm[1] * $c - $light[1], 2 * $norm[2] * $c - $light[2]);
+	my $c = (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
+	my @reflect = (-2 * $norm[0] * $c + $eyeV[0], -2 * $norm[1] * $c + $eyeV[1], -2 * $norm[2] * $c + $eyeV[2]);
 	$divBy = sqrt(($reflect[0] ** 2) + ($reflect[1] ** 2) + ($reflect[2] ** 2));
 	@reflect = (($reflect[0] / $divBy), ($reflect[1] / $divBy), ($reflect[2] / $divBy));
 	

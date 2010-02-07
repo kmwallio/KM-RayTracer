@@ -171,11 +171,15 @@ sub saveImage {
 		my $count = 1;
 		my $pixelCount = 0;
 		my $pixelHeight = 1;
+		my $writePixel = 0;
 		# Loop through the pixels and write them out to the file.
 		foreach my $pixel (@{$self->{_image}}) {
 			$pixelCount++;
 			foreach my $color (@{$pixel}){
-				print SAVEFILE $color;
+				$writePixel = int($color + 0.5);
+				$writePixel = (0 > $writePixel) ? 0 : $writePixel;
+				$writePixel = (255 < $writePixel) ? 255 : $writePixel;
+				print SAVEFILE $writePixel;
 				if($count < ($self->{_width} * 3)){
 					print SAVEFILE "\t";
 					$count++;

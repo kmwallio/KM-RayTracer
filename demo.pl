@@ -29,4 +29,4 @@ $rayObj->addObject(new Plane(0, 500, 0, 0, -1, .35, 215, 215, 215, 10));
 # Add another plane... (floor)
 $rayObj->addObject(new Plane(0, -500, 0, 0, 1, .35, 215, 215, 215, 5));
 $rayObj->drawImage();
-$rayObj->saveImage("/Users/twirp/Programming/Perl/RayTracing/test.ppm");
+$rayObj->saveImage("./test.ppm");
