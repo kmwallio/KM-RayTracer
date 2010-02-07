@@ -16,6 +16,7 @@ sub new {
 	
 	# Normalize the vector...
 	my $divBy = sqrt( ( $xT ** 2 ) + ( $yT ** 2 ) + ( $zT ** 2 ) );
+	
 	$xT = $xT / $divBy;
 	$yT = $yT / $divBy;
 	$zT = $zT / $divBy;

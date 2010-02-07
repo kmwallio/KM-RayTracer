@@ -13,6 +13,9 @@ sub new {
 		_x	=>	shift,
 		_y	=>	shift,
 		_z	=>	shift,
+		_r	=>	shift,
+		_g	=>	shift,
+		_b	=>	shift
 	};
 	
 	# Print output to consle
@@ -69,6 +72,7 @@ sub intersects {
 
 # Returns the color [R, G, B] of this point.
 sub getColor {
-	return [255, 255, 255];
+	my $self = shift;
+	return [$self->{_r}, $self->{_g}, $self->{_b}];
 }
 1;
