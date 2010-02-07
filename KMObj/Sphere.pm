@@ -68,28 +68,28 @@ sub getColor {
 	my ($self, $t, $b, $ray, $castor) = @_;
 	
 	# Items used in almost all calculations.
-	my @intPoint = $ray->getPoint($t);
-	my @lightI = $castor->{_lightIntensity};
-	my @ambient = $castor->{_ambientLight};
-	my @eyeV = $ray->getT();
+	my @intPoint = @{$ray->getPoint($t)};
+	my @lightI = @{$castor->{_lightIntensity}};
+	my @ambient = @{$castor->{_ambientLight}};
+	my @eyeV = @{$ray->getT()};
 	
 	# Calculate normal vector
-	my @norm = [($intPoint[0] - $self->{_x}), ($intPoint[1] - $self->{_y}), ($intPoint[2] - $self->{_z})];
+	my @norm = (($intPoint[0] - $self->{_x}), ($intPoint[1] - $self->{_y}), ($intPoint[2] - $self->{_z}));
 	my $divBy = sqrt(($norm[0] ** 2) + ($norm[1] ** 2) + ($norm[2] ** 2)); #probably equals the radius...
-	@norm = [($norm[0] / $divBy), ($norm[1] / $divBy), ($norm[2] / $divBy)]; #normalized normal vector.
+	@norm = (($norm[0] / $divBy), ($norm[1] / $divBy), ($norm[2] / $divBy)); #normalized normal vector.
 	
 	#calculate light unit vector
-	my @light = $castor->{_light};
-	@light = [($light[0] - $intPoint[0]), ($light[1] - $intPoint[1]), ($light[2] - $intPoint[2])];
+	my @light = @{$castor->{_light}};
+	@light = (($light[0] - $intPoint[0]), ($light[1] - $intPoint[1]), ($light[2] - $intPoint[2]));
 	$divBy = sqrt(($light[0] ** 2) + ($light[1] ** 2) + ($light[2] ** 2));
-	@light = [($light[0] / $divBy), ($light[1] / $divBy), ($light[2] / $divBy)]; #normalized
+	@light = (($light[0] / $divBy), ($light[1] / $divBy), ($light[2] / $divBy)); #normalized
 	
 	# Dotted normal dot light
 	my $nl = ($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]);
 	$nl = ($nl > 0) ? $nl : 0;
 	
 	# Find the reflective light unit vector.
-	my @reflect = [2 * $norm[0] * ($norm[0] * $light[0]) - $light[0], 2 * $norm[1] * ($norm[1] * $light[1]) - $light[1], 2 * $norm[2] * ($norm[2] * $light[2]) - $light[2]];
+	my @reflect = (2 * $norm[0] * ($norm[0] * $light[0]) - $light[0], 2 * $norm[1] * ($norm[1] * $light[1]) - $light[1], 2 * $norm[2] * ($norm[2] * $light[2]) - $light[2]);
 	
 	# Dotted eye and reflect vectors.
 	my $er = ($eyeV[0] * $reflect[0]) + ($eyeV[1] * $reflect[1]) + ($eyeV[2] * $reflect[2]);
