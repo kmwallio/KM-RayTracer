@@ -85,43 +85,17 @@ sub getColor {
 	$divBy = sqrt(($light[0] ** 2) + ($light[1] ** 2) + ($light[2] ** 2));
 	@light = (($light[0] / $divBy), ($light[1] / $divBy), ($light[2] / $divBy)); #normalized
 	
-	# Dotted normal dot light
-	my $nl = ($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]);
-	$nl = ($nl > 0) ? $nl : 0;
-	
-	# Find the reflective light unit vector.
-	#my $c = (($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]));
-	#my @reflect = (((2 * $norm[0] * $c) - $light[0]), ((2 * $norm[1] * $c) - $light[1]), ((2 * $norm[2] * $c) - $light[2]));
-	#my $c = (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
-	#my @reflect = (-2 * $norm[0] * $c + $eyeV[0], -2 * $norm[1] * $c + $eyeV[1], -2 * $norm[2] * $c + $eyeV[2]);
-	#$divBy = sqrt(($reflect[0] ** 2) + ($reflect[1] ** 2) + ($reflect[2] ** 2));
-	#$divBy = 1;
-	#@reflect = (($reflect[0] / $divBy), ($reflect[1] / $divBy), ($reflect[2] / $divBy));
-	
-	# Dotted eye and reflect vectors.
-	#if($self->{_phong} != 0){
-	#	my $er = (-$eyeV[0] * $reflect[0]) + (-$eyeV[1] * $reflect[1]) + (-$eyeV[2] * $reflect[2]);
-	#	$er = ($er > 0) ? $er : 0;
-	#	$er = $er ** $self->{_phong};
-	#}
-	
 	# Lambertian equation for diffuse reflection with ambient lighting.
-	my $red = $self->{_r} * ($ambient[0] + ($lightI[0] * $nl));
-	my $green = $self->{_g} * ($ambient[1] + ($lightI[1] * $nl));
-	my $blue = $self->{_b} * ($ambient[2] + ($lightI[2] * $nl));
+	my $red = $self->{_r};
+	my $green = $self->{_g};
+	my $blue = $self->{_b};
 	
-	# Phong illumination
-	#if($self->{_phong} != 0){
-	#	$red = $red + ($lightI[0] * $phongC[0] * $er);
-	#	$green = $green + ($lightI[1] * $phongC[1] * $er);
-	#	$blue = $blue + ($lightI[2] * $phongC[2] * $er);
-	#}
-	
+	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient);
 	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC);
 	
-	$red = $red + $pR;
-	$green = $green + $pG;
-	$blue = $blue + $pB;
+	$red = $red * $lR + $pR;
+	$green = $green * $lG + $pG;
+	$blue = $blue * $lB + $pB;
 	
 	return [$red, $green, $blue];
 }

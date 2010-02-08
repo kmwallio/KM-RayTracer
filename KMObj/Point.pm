@@ -82,6 +82,20 @@ sub getColor {
 	return [$self->{_r}, $self->{_g}, $self->{_b}];
 }
 
+# Calculate standard lambertian lighting
+sub lambert {
+	my $self = $_[0];
+	my @norm = @{$_[1]};
+	my @light = @{$_[2]};
+	my @lightI = @{$_[3]};
+	my @ambient = @{$_[4]};
+	
+	my $nl = ($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]);
+	$nl = ($nl > 0) ? $nl : 0;
+	
+	return (($ambient[0] + ($lightI[0] * $nl)), ($ambient[1] + ($lightI[1] * $nl)), ($ambient[2] + ($lightI[2] * $nl)));
+}
+
 # Calculate Phong Reflection
 sub phong {
 	my $self = $_[0];
@@ -105,8 +119,6 @@ sub phong {
 	$er = $er ** $self->{_phong};
 	
 	# Return new color
-	print ($lightI[0] * $phongC[0] * $er);
-	print "\n";
 	return (($lightI[0] * $phongC[0] * $er), ($lightI[1] * $phongC[1] * $er), ($lightI[2] * $phongC[2] * $er));
 }
 
