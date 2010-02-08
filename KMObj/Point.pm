@@ -81,4 +81,37 @@ sub getColor {
 	my $self = shift;
 	return [$self->{_r}, $self->{_g}, $self->{_b}];
 }
+
+# Calculate Phong Reflection
+sub phong {
+	my $self = $_[0];
+	my @norm = @{$_[1]};
+	my @eyeV = @{$_[2]};
+	my @light = @{$_[3]};
+	my @lightI = @{$_[4]};
+	my @phongC = @{$_[5]};
+	
+	if($self->{_phong} <= 0){
+		return (0, 0, 0);
+	}
+	
+	# Calculate needed vectors
+	my $c = (($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]));
+	my @reflect = (((2 * $norm[0] * $c) - $light[0]), ((2 * $norm[1] * $c) - $light[1]), ((2 * $norm[2] * $c) - $light[2]));
+	$divBy = sqrt(($reflect[0] ** 2) + ($reflect[1] ** 2) + ($reflect[2] ** 2));
+	@reflect = (($reflect[0] / $divBy), ($reflect[1] / $divBy), ($reflect[2] / $divBy));
+	my $er = (-$eyeV[0] * $reflect[0]) + (-$eyeV[1] * $reflect[1]) + (-$eyeV[2] * $reflect[2]);
+	$er = ($er > 0) ? $er : 0;
+	$er = $er ** $self->{_phong};
+	
+	# Return new color
+	print ($lightI[0] * $phongC[0] * $er);
+	print "\n";
+	return (($lightI[0] * $phongC[0] * $er), ($lightI[1] * $phongC[1] * $er), ($lightI[2] * $phongC[2] * $er));
+}
+
+# Returns the norm
+sub getNorm {
+	return (0, 0, 0);
+}
 1;
