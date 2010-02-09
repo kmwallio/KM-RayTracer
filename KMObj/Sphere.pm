@@ -28,6 +28,13 @@ sub new {
 	return $self;
 }
 
+# Checks for equality
+sub equals {
+	my ($self, $other) = @_;
+	my @coords = @{$other->getOrigin()};
+	return (($coords[0] == $self->{_x}) && ($coords[1] == $self->{_y}) && ($coords[2] == $self->{_z}) && ($self->{_radius} == $other->{_radius}));
+}
+
 # Determine if the sphere is hit by the ray.
 sub intersects {
 	my ($self, $ray) = @_;

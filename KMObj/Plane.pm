@@ -40,6 +40,12 @@ sub new {
 	return $self;
 }
 
+# Determines if two planes are equal
+sub equals {
+	my ($self, $other) = @_;
+	return (($self->{_dX} == $other->{_dX}) && ($self->{_dY} == $other->{_dY}) && ($self->{_dZ} == $other->{_dZ}) && ($self->{_nA} == $other->{_nA}) && ($self->{_nC} == $other->{_nC}) && ($self->{_nB} == $other->{_nB}));
+}
+
 # If the ray intersects this plane.
 sub intersects {
 	my $self = shift;
