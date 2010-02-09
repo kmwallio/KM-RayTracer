@@ -87,7 +87,8 @@ sub getColor {
 	my $blue = $self->{_b};
 	
 	if($self->{_reflect} == 1){
-		($red, $green, $blue) = @{$self->reflect(\@norm, \@eyeV, \@intPoint, $castor, $b)};
+		my @tempnorm = (($norm[0]), ($norm[1]), ($norm[2]));
+		($red, $green, $blue) = @{$self->reflect(\@tempnorm, \@eyeV, \@intPoint, $castor, $b)};
 	}
 	
 	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient);
