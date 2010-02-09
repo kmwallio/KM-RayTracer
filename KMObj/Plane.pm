@@ -10,7 +10,7 @@ our @ISA = qw(Point);
 
 sub new {
 	# A Plane is made up of a point (x0, y0, z0) and a normal vector.
-	my ($class, $x0, $y0, $z0, $nA, $nB, $nC, $r, $g, $b, $phong) = @_;
+	my ($class, $x0, $y0, $z0, $nA, $nB, $nC, $r, $g, $b, $phong, $reflect) = @_;
 	
 	# Normalize A, B, and C (because users and I might be too lazy to)
 	my $divBy = sqrt( ($nA ** 2) + ($nB ** 2) + ($nC ** 2) );
@@ -29,6 +29,7 @@ sub new {
 		_g	=>	$g,
 		_b	=>	$b,
 		_phong	=>	$phong,
+		_reflect	=>	$reflect,
 		_type	=>	"plane"
 	};
 	
@@ -84,6 +85,10 @@ sub getColor {
 	my $red = $self->{_r};
 	my $green = $self->{_g};
 	my $blue = $self->{_b};
+	
+	if($self->{_reflect} == 1){
+		($red, $green, $blue) = @{$self->reflect(\@norm, \@eyeV, \@intPoint, $castor, $b)};
+	}
 	
 	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient);
 	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC);

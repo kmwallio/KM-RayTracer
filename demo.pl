@@ -23,17 +23,17 @@ $rayObj->addObject(new Sphere(150, -180, 140, 120, 255, 255, 255, 4, 1));
 # Add a sphere...
 $rayObj->addObject(new Sphere(-150, -180, 500, 80, 255, 255, 255, 256, 0));
 # Add a plane... (back wall)
-$rayObj->addObject(new Plane(0, 0, 1000, 0, 0, -1, 255, 0, 0, 16));
+$rayObj->addObject(new Plane(0, 0, 1000, 0, 0, -1, 255, 0, 0, 16, 0));
 # Add another plane... (left Wall)
-$rayObj->addObject(new Plane(500, 0, 0, 1, 0, .25, 0, 255, 0, 10));
+$rayObj->addObject(new Plane(500, 0, 0, 1, 0, .25, 0, 255, 0, 10, 0));
 # Add another plane... (right wall)
-$rayObj->addObject(new Plane(-500, 0, 0, -1, 0, .25, 0, 255, 255, 12));
+$rayObj->addObject(new Plane(-500, 0, 0, -1, 0, .25, 0, 255, 255, 12, 0));
 # Add another plane... (ceiling)
-$rayObj->addObject(new Plane(0, 500, 0, 0, -1, .35, 215, 215, 215, 10));
+$rayObj->addObject(new Plane(0, 500, 0, 0, -1, .35, 215, 215, 215, 10, 1));
 # Add another plane... (floor)
-$rayObj->addObject(new Plane(0, -500, 0, 0, 1, .35, 215, 215, 215, 5));
+$rayObj->addObject(new Plane(0, -500, 0, 0, 1, .35, 215, 215, 215, 5, 0));
 # Add a plane... (back wall behind eye)
-$rayObj->addObject(new Plane(0, 0, -1000, 0, 0, -1, 255, 29, 24, 16));
+$rayObj->addObject(new Plane(0, 0, -1000, 0, 0, -1, 255, 29, 24, 16, 0));
 print "...\n";
 print "Drawing image\n";
 $rayObj->drawImage();
