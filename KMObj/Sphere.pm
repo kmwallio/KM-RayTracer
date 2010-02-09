@@ -10,7 +10,7 @@ our @ISA = qw(Point);
 
 # Constructor for sphere
 sub new {
-	my ($class, $x, $y, $z, $radius, $r, $g, $b, $phong) = @_;
+	my ($class, $x, $y, $z, $radius, $r, $g, $b, $phong, $reflect) = @_;
 	my $self = {
 		_x	=>	$x,
 		_y	=>	$y,
@@ -20,6 +20,7 @@ sub new {
 		_g	=>	$g,
 		_b	=>	$b,
 		_phong	=>	$phong,
+		_reflect	=>	$reflect,
 		_type	=>	"sphere"
 	};
 	bless $self, $class;
@@ -84,6 +85,10 @@ sub getColor {
 	my $red = $self->{_r};
 	my $green = $self->{_g};
 	my $blue = $self->{_b};
+	
+	if($self->{_reflect} == 1){
+		($red, $green, $blue) = @{$self->reflect(\@norm, \@eyeV, \@intPoint, $castor, $b)};
+	}
 	
 	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient);
 	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC);

@@ -127,7 +127,7 @@ sub drawImage {
 	my $i = 0; # LCV's
 	my $j = 0;
 	my $curRay = new Ray(0, 0, 0, 1, 1, 1);
-	my $closestObj = new Point(0,0,0,0,0,0); # Place holder point for getting closest point.
+	my $closestObj = undef; # Place holder point for getting closest point.
 	my $closestT = -1; # Closest point should be in positive area to show on image plane.
 	my $newT = 0;
 	
@@ -143,7 +143,7 @@ sub drawImage {
 			}
 			if( $closestT >= 0 ){
 				# If we have an intersection behind the image plane, draw it.
-				push(@{$self->{_image}}, $closestObj->getColor($closestT, $self->{_bounces}, $curRay, $self));
+				push(@{$self->{_image}}, $closestObj->getColor($closestT, $self->{_bounces}, $curRay, $self, $self->{_bounces}));
 			}else{
 				# If there's no intersection, use the default background color.
 				push(@{$self->{_image}}, $self->{_background});

@@ -5,6 +5,7 @@
 
 # Generic Shape Package... Just an interface type package...
 package Point;
+use KMObj::Ray;
 
 # Default Constructor
 sub new {
@@ -25,7 +26,6 @@ sub new {
 	bless $self, $class;
 	return $self;
 }
-
 
 # Determines if this object intersects another and returns t.
 sub intersects {
@@ -135,6 +135,63 @@ sub phong {
 	
 	# Return new color
 	return (($lightI[0] * $phongC[0] * $er), ($lightI[1] * $phongC[1] * $er), ($lightI[2] * $phongC[2] * $er));
+}
+
+# Returns the color from a reflection...
+sub reflect {
+	my $self = $_[0];
+	my @norm = @{$_[1]};
+	my @eyeV = @{$_[2]};
+	my @intPoint = @{$_[3]};
+	my $castor = $_[4];
+	my $bounces = $_[5] - 1;
+	
+	if($bounces < 0){
+		return $castor->{_background};
+	}
+	
+	# Calculate a reflective vector...
+	my $c = (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
+	my @reflect = (((-2 * $norm[0] * $c) + $eyeV[0]), ((-2 * $norm[1] * $c) + $eyeV[1]), ((-2 * $norm[2] * $c) + $eyeV[2]));
+	#print "Eye: @eyeV , Reflect: @reflect \n";
+	
+	# Create a new ray of that vector
+	my $reflectRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $reflect[0]), ($intPoint[1] + $reflect[1]), ($intPoint[2] + $reflect[2]));
+	
+	# Loop through and reflect stuff!
+	my $newT = 0;
+	my $closestT = -1;
+	my $closestObj = undef;
+	
+	foreach $curObj (@{$castor->{_kmobjs}}){
+		if(!($self->equals($curObj))){
+			$newT = $curObj->intersects($reflectRay); # Get the current distance
+			if( $closestT < 0 || ($closestT > $newT && !($newT < 0)) ){ # See if it's the first item or a closer one
+				$closestT = $newT; # Get the current T
+				$closestObj = $curObj; # Record the closest object.
+			}
+		}
+	}
+	if( $closestT >= 0 ){
+		# If we have an intersection behind the image plane, draw it.
+		return $closestObj->getColor($closestT, $bounces, $reflectRay, $castor);
+	}else{
+		# If there's no intersection, use the default background color.
+		return $castor->{_background};
+	}
+}
+
+# Returns type of item
+sub getType {
+	my $self = shift;
+	return $self->{_type};
+}
+
+# Checks for equality
+sub equals {
+	my ($self, $other) = @_;
+	my @coords = @{$other->getOrigin()};
+	return ($coords[0] == $self->{_x} && $coords[1] == $self->{_y} && $coords[2] == $self->{_z});
 }
 
 # Returns the norm
