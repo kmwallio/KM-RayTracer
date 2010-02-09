@@ -15,7 +15,8 @@ sub new {
 		_z	=>	shift,
 		_r	=>	shift,
 		_g	=>	shift,
-		_b	=>	shift
+		_b	=>	shift,
+		_type	=>	"point"
 	};
 	
 	# Print output to consle
@@ -70,6 +71,14 @@ sub intersects {
 	return $t;
 }
 
+# Set's a new origin point.
+sub setOrigin {
+	my ($self, $nX, $nY, $nZ) = @_;
+	$self->{_x} = $nX;
+	$self->{_y} = $nY;
+	$self->{_z} = $nZ;
+}
+
 # Returns orgin point
 sub getOrigin {
 	my $self = shift;
@@ -78,6 +87,12 @@ sub getOrigin {
 
 # Returns the color [R, G, B] of this point.
 sub getColor {
+	my $self = shift;
+	return [$self->{_r}, $self->{_g}, $self->{_b}];
+}
+
+# For preview window...
+sub getBasic {
 	my $self = shift;
 	return [$self->{_r}, $self->{_g}, $self->{_b}];
 }

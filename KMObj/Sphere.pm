@@ -19,7 +19,8 @@ sub new {
 		_r	=>	$r,
 		_g	=>	$g,
 		_b	=>	$b,
-		_phong	=>	$phong
+		_phong	=>	$phong,
+		_type	=>	"sphere"
 	};
 	bless $self, $class;
 	print "Created new " . $class . ".\n";
@@ -54,12 +55,6 @@ sub intersects {
 	} else {
 		$t = $t1;
 	}
-	#if($t > 0){
-	#	print "A: $A, B: $B, C: $C  ";
-	#	print "Intersection! $t1 -- $t2\n";
-	#}else{
-	#	print "No!\n";
-	#}
 	return $t;
 }
 

@@ -28,7 +28,8 @@ sub new {
 		_r	=>	$r,
 		_g	=>	$g,
 		_b	=>	$b,
-		_phong	=>	$phong
+		_phong	=>	$phong,
+		_type	=>	"plane"
 	};
 	
 	# Print output to consle
