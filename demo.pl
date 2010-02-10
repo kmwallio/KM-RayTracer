@@ -11,9 +11,28 @@ use KMObj::Plane;
 use KMObj::Sphere;
 
 print "Oh Yeah!\n";
-# Width, Height, eyeX, eyeY, eyeZ, lightX, lightY, lightZ, lightIntensity R, G, B, Ambient Light R, G, B, Phong Light R, G, B, Background color R, G, B, # of Bounces
-# 0 <= Light Intentsity + Ambient Light <= 1
-my $rayObj = new Castor(500, 500, 0, 0, -300,  150, 150, 150, 70, 70, 70, 30, 30, 30, 255, 255, 255, 0, 0, 0, 5);
+#my $rayObj = new Castor(255, 255, 255, 0, 0, 0, 5);
+#Create a new castor object...
+my $rayObj = new Castor();
+
+# Set the width and height of the image
+$rayObj->setWidthHeight(500, 500);
+# Set the location of the camera/eye
+$rayObj->setEye(0, 0, -300); # The eye should be on the opposite side of the objects.
+# Set the light location
+$rayObj->setLight(150, 150, 150);
+# Set the light intensity
+$rayObj->setLightIntensity(70, 70, 70);
+# Set the ambient light intensity (Note, the light intensity + ambient light intensity should be less than or equal to 100)
+$rayObj->setAmbientLight(30, 30, 30);
+# Color of phong lighting or glare
+$rayObj->setPhong(255, 255, 255);
+# Set the background color
+$rayObj->setBackground(0, 0, 0);
+# Set the number of bounces (limit recursion depth)
+$rayObj->setBounces(13);
+
+
 # Add a sphere...
 $rayObj->addObject(new Sphere(0, 0, 200, 80, 0, 0, 255, 1, 0));
 # Add a sphere...

@@ -12,27 +12,76 @@ use KMObj::Plane;
 
 # The constructor
 sub new {
-	my ($class, $width, $height, $eyeX, $eyeY, $eyeZ, $lightX, $lightY, $lightZ, $lightR, $lightG, $lightB, $aR, $aG, $aB, $pR, $pG, $pB, $bgR, $bgG, $bgB, $bounces) = @_; # Extract args
-	$lightR = $lightR / 100; # We take in a percentage.
-	$lightG = $lightG / 100;
-	$lightB = $lightB / 100;
-	$aR = $aR / 100;
-	$aG = $aG / 100;
-	$aB = $aB / 100;
+	my $class = shift;
+	#my ($class, $width, $height, $eyeX, $eyeY, $eyeZ, $lightX, $lightY, $lightZ, $lightR, $lightG, $lightB, $aR, $aG, $aB, $pR, $pG, $pB, $bgR, $bgG, $bgB, $bounces) = @_; # Extract args
+	#my $self = {
+	#	_width => $width,
+	#	_height => $height,
+	#	_bounces => $bounces,
+	#	_eye => [$eyeX, $eyeY, $eyeZ],
+	#	_light => [$lightX, $lightY, $lightZ],
+	#	_lightIntensity => [$lightR, $lightG, $lightB],
+	#	_ambientLight	=>	[$aR, $aG, $aB],
+	#	_phongLight	=>	[$pR, $pG, $pB],
+	#	_background =>	[$bgR, $bgG, $bgB],
+	#	_kmobjs => [],
+	#	_image => []
+	#};
 	my $self = {
-		_width => $width,
-		_height => $height,
-		_bounces => $bounces,
-		_eye => [$eyeX, $eyeY, $eyeZ],
-		_light => [$lightX, $lightY, $lightZ],
-		_lightIntensity => [$lightR, $lightG, $lightB],
-		_ambientLight	=>	[$aR, $aG, $aB],
-		_phongLight	=>	[$pR, $pG, $pB],
-		_background =>	[$bgR, $bgG, $bgB],
+		_width => 500,
+		_height => 500,
+		_bounces => 10,
+		_eye => [0, 0, -250],
+		_light => [250, 250, 250],
+		_lightIntensity => [0.7, 0.7, 0.7],
+		_ambientLight	=>	[0.3, 0.3, 0.3],
+		_phongLight	=>	[255, 255, 255],
+		_background =>	[0, 0, 0],
 		_kmobjs => [],
 		_image => []
 	};
 	bless $self, $class;
+	return $self;
+}
+
+# Set the number of bounces or recursion to take place
+sub setBounces {
+	my ($self, $b) = @_;
+	$self->{_bounces} = $b;
+	return $self;
+}
+
+# Set the ambient lighting
+sub setAmbientLight {
+	my ($self, $r, $g, $b) = @_;
+	$r = $r / 100;
+	$g = $g / 100;
+	$b = $b / 100;
+	$self->{_ambientLight} = [$r, $g, $b];
+	return $self;
+}
+
+# Set the phong color...
+sub setPhong {
+	my ($self, $r, $g, $b) = @_;
+	$self->{_phoneLight} = [$r, $g, $b];
+	return $self;
+}
+
+# Set light intensity
+sub setLightIntensity {
+	my ($self, $r, $g, $b) = @_;
+	$r = $r / 100;
+	$g = $g / 100;
+	$b = $b / 100;
+	$self->{_ligntIntensity} = [$r, $g, $b];
+	return $self;
+}
+
+# Set the background
+sub setBackground {
+	my ($self, $r, $g, $b) = @_;
+	$self->{_background} = [$r, $g, $b];
 	return $self;
 }
 
@@ -47,12 +96,22 @@ sub addObject {
 sub setWidth {
 	my ($self, $newWidth) = @_; # Extract args
 	$self->{_width} = $newWidth;
+	return $self;
 }
 
 # Change the height of the image
 sub setHeight {
 	my ($self, $newHeight) = @_; # Extract args
 	$self->{_height} = $newHeight;
+	return $self;
+}
+
+# Set both width and height
+sub setWidthHeight {
+	my ($self, $newWidth, $newHeight) = @_;
+	$self->{_width} = $newWidth;
+	$self->{_height} = $newHeight;
+	return $self;
 }
 
 # Change the location of the eye
