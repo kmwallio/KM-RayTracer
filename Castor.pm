@@ -13,20 +13,7 @@ use KMObj::Plane;
 # The constructor
 sub new {
 	my $class = shift;
-	#my ($class, $width, $height, $eyeX, $eyeY, $eyeZ, $lightX, $lightY, $lightZ, $lightR, $lightG, $lightB, $aR, $aG, $aB, $pR, $pG, $pB, $bgR, $bgG, $bgB, $bounces) = @_; # Extract args
-	#my $self = {
-	#	_width => $width,
-	#	_height => $height,
-	#	_bounces => $bounces,
-	#	_eye => [$eyeX, $eyeY, $eyeZ],
-	#	_light => [$lightX, $lightY, $lightZ],
-	#	_lightIntensity => [$lightR, $lightG, $lightB],
-	#	_ambientLight	=>	[$aR, $aG, $aB],
-	#	_phongLight	=>	[$pR, $pG, $pB],
-	#	_background =>	[$bgR, $bgG, $bgB],
-	#	_kmobjs => [],
-	#	_image => []
-	#};
+	# Default settings.
 	my $self = {
 		_width => 500,
 		_height => 500,
@@ -37,10 +24,18 @@ sub new {
 		_ambientLight	=>	[0.3, 0.3, 0.3],
 		_phongLight	=>	[255, 255, 255],
 		_background =>	[0, 0, 0],
+		_refraction	=>	1;
 		_kmobjs => [],
 		_image => []
 	};
 	bless $self, $class;
+	return $self;
+}
+
+# Set the coefficient of refraction
+sub setRefraction {
+	my ($self, $refrac) = @_;
+	$self->{_refraction} = $refrac;
 	return $self;
 }
 
@@ -259,8 +254,15 @@ sub saveImage {
 	}
 }
 
+# Returns an array representation of the image
 sub getImage {
 	my $self = shift;
 	return @{$self->{_image}};
+}
+
+# Returns a list of the objects
+sub getObjects {
+	my $self = shift;
+	return $self->{_kmobjs};
 }
 1;
