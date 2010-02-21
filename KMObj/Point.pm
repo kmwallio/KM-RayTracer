@@ -104,11 +104,12 @@ sub lambert {
 	my @light = @{$_[2]};
 	my @lightI = @{$_[3]};
 	my @ambient = @{$_[4]};
+	my @shadow = @{$_[5]};
 	
 	my $nl = ($light[0] * $norm[0]) + ($light[1] * $norm[1]) + ($light[2] * $norm[2]);
 	$nl = ($nl > 0) ? $nl : 0;
 	
-	return (($ambient[0] + ($lightI[0] * $nl)), ($ambient[1] + ($lightI[1] * $nl)), ($ambient[2] + ($lightI[2] * $nl)));
+	return (($ambient[0] + ($lightI[0] * $nl * $shadow[0])), ($ambient[1] + ($lightI[1] * $nl * $shadow[1])), ($ambient[2] + ($lightI[2] * $nl * $shadow[2])));
 }
 
 # Calculate Phong Reflection
@@ -119,6 +120,7 @@ sub phong {
 	my @light = @{$_[3]};
 	my @lightI = @{$_[4]};
 	my @phongC = @{$_[5]};
+	my @shadow = @{$_[6]};
 	
 	if($self->{_phong} <= 0){
 		return (0, 0, 0);
@@ -134,7 +136,53 @@ sub phong {
 	$er = $er ** $self->{_phong};
 	
 	# Return new color
-	return (($lightI[0] * $phongC[0] * $er), ($lightI[1] * $phongC[1] * $er), ($lightI[2] * $phongC[2] * $er));
+	return (($lightI[0] * $phongC[0] * $er * $shadow[0]), ($lightI[1] * $phongC[1] * $er * $shadow[1]), ($lightI[2] * $phongC[2] * $er * $shadow[2]));
+}
+
+# If the point in covered from the light (percentage of light seen).
+sub lightIn {
+	my $self = $_[0];
+	my @light = @{$_[1]};
+	my @intPoint = @{$_[2]};
+	my $castor = $_[3];
+	my @lightPoint = @{$castor->{_light}};
+	
+	# Loop through and block stuff!
+	my $newT = 0;
+	my $closestT = -1;
+	my $closestObj = undef;
+	my $shadowRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $light[0]), ($intPoint[1] + $light[1]), ($intPoint[2] + $light[2]));
+	
+	foreach $curObj (@{$castor->{_kmobjs}}){
+		if(!($self->equals($curObj))){
+			$newT = $curObj->intersects($shadowRay); # Get the current distance
+			if( $closestT < 0 || ($closestT > $newT && !($newT < 0)) ){ # See if it's the first item or a closer one
+				$closestT = $newT; # Get the current T
+				$closestObj = $curObj; # Record the closest object.
+			}
+		}
+	}
+	
+	if($closestT > 0){
+		my @blockPoint = @{$shadowRay->getPoint($closestT)};
+		#print $self->distance(\@blockPoint, \@intPoint);
+		#print " > ";
+		#print $self->distance(\@lightPoint, \@intPoint);
+		#print "\n";
+		if($self->distance(\@blockPoint, \@intPoint) > $self->distance(\@lightPoint, \@intPoint)){
+			return [1, 1, 1];
+		}
+	}else{
+		return [1, 1, 1];
+	}
+	return [0, 0, 0];
+}
+
+sub distance {
+	my $self = $_[0];
+	my @start = @{$_[1]};
+	my @end = @{$_[2]};
+	return sqrt( (($start[0] - $end[0]) ** 2) + (($start[1] - $end[1]) ** 2) + (($start[2] - $end[2]) ** 2) );
 }
 
 # Returns the color from a reflection...

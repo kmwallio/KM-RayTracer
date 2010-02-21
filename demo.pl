@@ -20,7 +20,7 @@ $rayObj->setWidthHeight(500, 500);
 # Set the location of the camera/eye
 $rayObj->setEye(0, 0, -300); # The eye should be on the opposite side of the objects.
 # Set the light location
-$rayObj->setLight(150, 150, 150);
+$rayObj->setLight(500, 500, 500);
 # Set the light intensity
 $rayObj->setLightIntensity(70, 70, 70);
 # Set the ambient light intensity (Note, the light intensity + ambient light intensity should be less than or equal to 100)

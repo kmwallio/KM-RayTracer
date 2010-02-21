@@ -100,8 +100,9 @@ sub getColor {
 		$blue = ((1 - $self->{_reflect}) * $blue) + ($rblue * ($self->{_reflect}));
 	}
 	
-	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient);
-	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC);
+	my @inShadow = @{$self->lightIn(\@light, \@intPoint, $castor)};
+	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient, \@inShadow);
+	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC, \@inShadow);
 	
 	$red = $red * $lR + $pR;
 	$green = $green * $lG + $pG;
