@@ -6,6 +6,7 @@
 # Sphere for ray tracer.
 package Plane;
 use KMObj::Point;
+use Math::Trig;
 our @ISA = qw(Point);
 
 sub new {
@@ -87,6 +88,11 @@ sub getColor {
 	@light = (($light[0] - $intPoint[0]), ($light[1] - $intPoint[1]), ($light[2] - $intPoint[2]));
 	$divBy = sqrt(($light[0] ** 2) + ($light[1] ** 2) + ($light[2] ** 2));
 	@light = (($light[0] / $divBy), ($light[1] / $divBy), ($light[2] / $divBy)); #normalized
+	
+	my $dn = -1 * (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
+	if(rad2deg(acos($dn)) > 90){
+		@norm = ((-1 * $norm[0]), (-1 * $norm[1]), (-1 * $norm[2]));
+	}
 	
 	my $red = $self->{_r};
 	my $green = $self->{_g};

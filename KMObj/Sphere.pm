@@ -61,7 +61,7 @@ sub intersects {
 	};
 	if ($t1 >= 0 && $t2 >= 0){
 		$t = ($t1 < $t2) ? $t1 : $t2;
-	} elsif ($t1 < 0){
+	} elsif ($t1 <= 0){
 		$t = $t2;
 	} else {
 		$t = $t1;
@@ -96,24 +96,26 @@ sub getColor {
 	my $green = $self->{_g};
 	my $blue = $self->{_b};
 	
+	my $inside = 0;
+	
 	# If this is a transparent object...
 	if($self->{_refrac} != 0){
 		# If we're inside of ourself, we need to flip the normal...
-		my $theta = ($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]);
-		$theta = rad2deg(acos($theta));
-		if($theta <= 90){
+		my $dn = (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
+		#if(rad2deg(acos($dn)) > 90){
+		#	$inside = 1;
+		#	@tnorm = ((-1 * $norm[0]), (-1 * $norm[1]), (-1 * $norm[2]));
+		#	my ($tred, $tgreeb, $tblue) = @{$self->refract(\@eyeV, \@tnorm, \@intPoint, $self->{_refracC}, $castor->{_refraction}, $castor, $b)};
+		#}else{
 			my ($tred, $tgreeb, $tblue) = @{$self->refract(\@eyeV, \@norm, \@intPoint, $castor->{_refraction}, $self->{_refracC}, $castor, $b)};
-		}else{
-			@norm = ((-1 * $norm[0]), (-1 * $norm[1]), (-1 * $norm[2]));
-			my ($tred, $tgreeb, $tblue) = @{$self->refract(\@eyeV, \@norm, \@intPoint, $self->{_refracC}, $castor->{_refraction}, $castor, $b)};
-		}
+		#}
 		$red = ((1 - $self->{_refrac}) * $red) + ($tred * ($self->{_refrac}));
 		$green = ((1 - $self->{_refrac}) * $green) + ($tgreen * ($self->{_refrac}));
 		$blue = ((1 - $self->{_refrac}) * $blue) + ($tblue * ($self->{_refrac}));
 	}
 	
 	# If this is a reflective object
-	if($self->{_reflect} != 0){
+	if($self->{_reflect} != 0  && $inside != 1){
 		my ($rred, $rgreen, $rblue) = @{$self->reflect(\@norm, \@eyeV, \@intPoint, $castor, $b)};
 		$red = ((1 - $self->{_reflect}) * $red) + ($rred * ($self->{_reflect}));
 		$green = ((1 - $self->{_reflect}) * $green) + ($rgreen * ($self->{_reflect}));
@@ -121,13 +123,15 @@ sub getColor {
 	}
 	
 	# If we're in the shadows.
-	my @inShadow = @{$self->lightIn(\@light, \@intPoint, $castor)};
-	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient, \@inShadow);
-	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC, \@inShadow);
+	if($inside != 1){
+		my @inShadow = @{$self->lightIn(\@light, \@intPoint, $castor)};
+		my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient, \@inShadow);
+		my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC, \@inShadow);
 	
-	$red = $red * $lR + $pR;
-	$green = $green * $lG + $pG;
-	$blue = $blue * $lB + $pB;
+		$red = $red * $lR + $pR;
+		$green = $green * $lG + $pG;
+		$blue = $blue * $lB + $pB;
+	}
 	
 	return [$red, $green, $blue];
 }

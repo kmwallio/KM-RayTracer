@@ -245,13 +245,23 @@ sub refract {
 	}
 	
 	# Calculate the translated ray
-	my $dn = ($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]);
+	my $dn = -1 * (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
 	#$dn = ($dn > 0) ? $dn : 0;
-	my $theta = 1; #acos($dn);
-	my $tpd2 = sqrt(1 - (((($worldRefrac ** 2) * (1 - ($dn ** 2) * $theta)) / ($materRefrac ** 2))));
-	my @tp2 = (($norm[0] * $tpd2), ($norm[1] * $tpd2), ($norm[2] * $tpd2));
-	my @tp1 = ((($worldRefrac * ($eyeV[0] - ($norm[0] * $dn))) / $materRefrac), (($worldRefrac * ($eyeV[1] - ($norm[1] * $dn))) / $materRefrac), (($worldRefrac * ($eyeV[0] - ($norm[1] * $dn))) / $materRefrac));
-	my @tran = (($tp1[0] - $tp2[0]), ($tp1[1] - $tp2[1]), ($tp1[2] - $tp2[2]));
+	#my $theta = 1; #acos($dn);
+	#my $tpd2 = sqrt(1 - (((($worldRefrac ** 2) * (1 - ($dn ** 2))) / ($materRefrac ** 2))));
+	#my @tp2 = (($norm[0] * $tpd2), ($norm[1] * $tpd2), ($norm[2] * $tpd2));
+	#my @tp1 = ((($worldRefrac * ($eyeV[0] - ($norm[0] * $dn))) / $materRefrac), (($worldRefrac * ($eyeV[1] - ($norm[1] * $dn))) / $materRefrac), (($worldRefrac * ($eyeV[0] - ($norm[1] * $dn))) / $materRefrac));
+	#my @tran = (($tp1[0] - $tp2[0]), ($tp1[1] - $tp2[1]), ($tp1[2] - $tp2[2]));
+	my @tran = @eyeV;
+	my $N = $worldRefrac / $materRefrac;
+	if((1 + ($N ** 2) * (($dn ** 2) - 1)) > 0){
+		my $tpd2 = $N * $dn - sqrt(1 + ($N ** 2) * (($dn ** 2) - 1));
+		my @tp2 = (($norm[0] * $tpd2), ($norm[1] * $tpd2), ($norm[2] * $tpd2));
+		my @tp1 = ((($worldRefrac * ($eyeV[0])) / $materRefrac), (($worldRefrac * ($eyeV[1])) / $materRefrac), (($worldRefrac * ($eyeV[0])) / $materRefrac));
+		@tran = (($tp1[0] + $tp2[0]), ($tp1[1] + $tp2[1]), ($tp1[2] + $tp2[2]));
+	}else{
+		return [$self->{_r}, $self->{_g}, $self->{_b}];
+	}
 	
 	# Create the actual ray
 	my $tranRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $tran[0]), ($intPoint[1] + $tran[1]), ($intPoint[2] + $tran[2]));
@@ -261,15 +271,17 @@ sub refract {
 	my $closestT = -1;
 	my $closestObj = undef;
 	foreach $curObj (@{$castor->{_kmobjs}}){
+		if(!($self->equals($curObj))){
 			$newT = $curObj->intersects($tranRay); # Get the current distance
 			if( $closestT < 0 || ($closestT > $newT && !($newT <= 0)) ){ # See if it's the first item or a closer one
 				$closestT = $newT; # Get the current T
 				$closestObj = $curObj; # Record the closest object.
 			}
+		}
 	}
 	
 	# Grab the color!
-	if( $closestT >= 0 ){
+	if( $closestT > 0 ){
 		# If we have an intersection behind the image plane, draw it.
 		return $closestObj->getColor($closestT, $bounces, $tranRay, $castor);
 	}else{
