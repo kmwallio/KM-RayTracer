@@ -6,11 +6,12 @@
 # Sphere for ray tracer.
 package Sphere;
 use KMObj::Point;
+use Math::Trig;
 our @ISA = qw(Point);
 
 # Constructor for sphere
 sub new {
-	my ($class, $x, $y, $z, $radius, $r, $g, $b, $phong, $reflect) = @_;
+	my ($class, $x, $y, $z, $radius, $r, $g, $b, $phong, $reflect, $refracC, $refrac) = @_;
 	my $self = {
 		_x	=>	$x,
 		_y	=>	$y,
@@ -21,6 +22,8 @@ sub new {
 		_b	=>	$b,
 		_phong	=>	$phong,
 		_reflect	=>	$reflect,
+		_refrac => $refrac,
+		_refracC => $refracC,
 		_type	=>	"sphere"
 	};
 	bless $self, $class;
@@ -93,6 +96,23 @@ sub getColor {
 	my $green = $self->{_g};
 	my $blue = $self->{_b};
 	
+	# If this is a transparent object...
+	if($self->{_refrac} != 0){
+		# If we're inside of ourself, we need to flip the normal...
+		my $theta = ($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]);
+		$theta = rad2deg(acos($theta));
+		if($theta <= 90){
+			my ($tred, $tgreeb, $tblue) = @{$self->refract(\@eyeV, \@norm, \@intPoint, $castor->{_refraction}, $self->{_refracC}, $castor, $b)};
+		}else{
+			@norm = ((-1 * $norm[0]), (-1 * $norm[1]), (-1 * $norm[2]));
+			my ($tred, $tgreeb, $tblue) = @{$self->refract(\@eyeV, \@norm, \@intPoint, $self->{_refracC}, $castor->{_refraction}, $castor, $b)};
+		}
+		$red = ((1 - $self->{_refrac}) * $red) + ($tred * ($self->{_refrac}));
+		$green = ((1 - $self->{_refrac}) * $green) + ($tgreen * ($self->{_refrac}));
+		$blue = ((1 - $self->{_refrac}) * $blue) + ($tblue * ($self->{_refrac}));
+	}
+	
+	# If this is a reflective object
 	if($self->{_reflect} != 0){
 		my ($rred, $rgreen, $rblue) = @{$self->reflect(\@norm, \@eyeV, \@intPoint, $castor, $b)};
 		$red = ((1 - $self->{_reflect}) * $red) + ($rred * ($self->{_reflect}));
@@ -100,6 +120,7 @@ sub getColor {
 		$blue = ((1 - $self->{_reflect}) * $blue) + ($rblue * ($self->{_reflect}));
 	}
 	
+	# If we're in the shadows.
 	my @inShadow = @{$self->lightIn(\@light, \@intPoint, $castor)};
 	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient, \@inShadow);
 	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC, \@inShadow);
