@@ -92,9 +92,11 @@ sub getColor {
 	my $green = $self->{_g};
 	my $blue = $self->{_b};
 	
-	if($self->{_reflect} == 1){
-		my @tempnorm = (($norm[0]), ($norm[1]), ($norm[2]));
-		($red, $green, $blue) = @{$self->reflect(\@tempnorm, \@eyeV, \@intPoint, $castor, $b)};
+	if($self->{_reflect} != 0){
+		my ($rred, $rgreen, $rblue) = @{$self->reflect(\@norm, \@eyeV, \@intPoint, $castor, $b)};
+		$red = ((1 - $self->{_reflect}) * $red) + ($rred * ($self->{_reflect}));
+		$green = ((1 - $self->{_reflect}) * $green) + ($rgreen * ($self->{_reflect}));
+		$blue = ((1 - $self->{_reflect}) * $blue) + ($rblue * ($self->{_reflect}));
 	}
 	
 	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient);

@@ -24,7 +24,7 @@ sub new {
 		_ambientLight	=>	[0.3, 0.3, 0.3],
 		_phongLight	=>	[255, 255, 255],
 		_background =>	[0, 0, 0],
-		_refraction	=>	1;
+		_refraction	=>	1,
 		_kmobjs => [],
 		_image => []
 	};
