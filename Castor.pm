@@ -167,7 +167,7 @@ sub drawImage {
 			}
 		} else { # It's less than the width of the image.
 			# Try to keep the image centered around (0,0,0)
-			if( abs( $endY ) < $endX ){
+			if( abs( $endY ) < $startY ){
 				$endY = $endY - 1; # End should always be negative, so minus.
 			} else {
 				$startY = $startY + 1; # Start heads out, so plus
