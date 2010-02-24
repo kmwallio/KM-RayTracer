@@ -119,38 +119,36 @@ sub getColor {
 	my $green = $self->{_g};
 	my $blue = $self->{_b};
 	
-	my $inside = 0;
-	
 	# If this is a transparent object...
 	if($self->{_refrac} != 0){
 		my ($tred, $tgreeb, $tblue) = @{$self->refract(\@eyeV, \@norm, \@intPoint, $castor->{_refraction}, $self->{_refracC}, $castor, $b)};
-		$red = ((1 - $self->{_refrac}) * $red) + ($tred * ($self->{_refrac}));
-		$green = ((1 - $self->{_refrac}) * $green) + ($tgreen * ($self->{_refrac}));
-		$blue = ((1 - $self->{_refrac}) * $blue) + ($tblue * ($self->{_refrac}));
+		#$red = ((1 - $self->{_refrac}) * $red) + ($tred * ($self->{_refrac}));
+		#$green = ((1 - $self->{_refrac}) * $green) + ($tgreen * ($self->{_refrac}));
+		#$blue = ((1 - $self->{_refrac}) * $blue) + ($tblue * ($self->{_refrac}));
+		$red = ($tred * ($self->{_refrac}));
+		$green = ($tgreen * ($self->{_refrac}));
+		$blue = ($tblue * ($self->{_refrac}));
 	}
 	
 	# If this is a reflective object
-	if($self->{_reflect} != 0  && $inside != 1){
+	if($self->{_reflect} != 0){
 		my ($rred, $rgreen, $rblue) = @{$self->reflect(\@norm, \@eyeV, \@intPoint, $castor, $b)};
 		$red = ((1 - $self->{_reflect}) * $red) + ($rred * ($self->{_reflect}));
 		$green = ((1 - $self->{_reflect}) * $green) + ($rgreen * ($self->{_reflect}));
 		$blue = ((1 - $self->{_reflect}) * $blue) + ($rblue * ($self->{_reflect}));
 	}
 	
-	# If we're in the shadows.
-	if($inside != 1){
-		my @inShadow = @{$self->lightIn(\@light, \@intPoint, $castor)};
-		my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient, \@inShadow);
-		my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC, \@inShadow);
-	
-		$red = $red * $lR + $pR;
-		$green = $green * $lG + $pG;
-		$blue = $blue * $lB + $pB;
-	}
+	# If we're in the shadows
+	my @inShadow = @{$self->lightIn(\@light, \@intPoint, $castor)};
+	my ($lR, $lG, $lB) = $self->lambert(\@norm, \@light, \@lightI, \@ambient, \@inShadow);
+	my ($pR, $pG, $pB) = $self->phong(\@norm, \@eyeV, \@light, \@lightI, \@phongC, \@inShadow);
+
+	$red = $red * $lR + $pR;
+	$green = $green * $lG + $pG;
+	$blue = $blue * $lB + $pB;
 	
 	return [$red, $green, $blue];
 }
-
 sub refract {
 	my $self = $_[0];
 	my @eyeV = @{$_[1]};
@@ -164,41 +162,29 @@ sub refract {
 	if($bounces == 0){
 		return $castor->{_background};
 	}
-	
 	# Calculate the translated ray
 	my $dn = -1 * (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
+	my $nn = $worldRefrac / $materRefrac;
 	my @tran = @eyeV;
-	my $N = $worldRefrac / $materRefrac;
-	if((1 - ($N ** 2) * (1 - ($dn ** 2))) > 0){
-		my $tpd2 = $N * $dn - sqrt(1 - ($N ** 2) * (1 - ($dn ** 2)));
-		my @tp2 = (($norm[0] * $tpd2), ($norm[1] * $tpd2), ($norm[2] * $tpd2));
-		my @tp1 = (($eyeV[0] * $N), ($eyeV[1] * $N), ($eyeV[2] * $N));
-		@tran = (($tp1[0] + $tp2[0]), ($tp1[1] + $tp2[1]), ($tp1[2] + $tp2[2]));
+	if( (1 - (($nn ** 2) * ($dn ** 2))) >= 0){
+		my $p1 = ($nn * $dn) - sqrt((1 - (($nn ** 2) * ($dn ** 2))));
+		@tran = ((($p1 * $norm[0]) - ($nn * $eyeV[0])), (($p1 * $norm[1]) - ($nn * $eyeV[1])), (($p1 * $norm[2]) - ($nn * $eyeV[2])));
 	}
 	
-	# Create the actual ray
 	my $tranRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $tran[0]), ($intPoint[1] + $tran[1]), ($intPoint[2] + $tran[2]));
 	
-	# Get if we intersect ourselves.
 	my $selfT = $self->intersectsT($tranRay);
 	
-	# Calculate the ray we launch.
 	if($selfT > 0){
 		@intPoint = @{$tranRay->getPoint($selfT)};
 		$dn = (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
-		$N = $worldRefrac / $materRefrac;
-		if((1 - ($N ** 2) * (1 - ($dn ** 2))) > 0){
-			my $tpd2 = $N * $dn - sqrt(1 - ($N ** 2) * (1 - ($dn ** 2)));
-			my @tp2 = (($norm[0] * $tpd2), ($norm[1] * $tpd2), ($norm[2] * $tpd2));
-			my @tp1 = (($eyeV[0] * $N), ($eyeV[1] * $N), ($eyeV[2] * $N));
-			@tran = (($tp1[0] + $tp2[0]), ($tp1[1] + $tp2[1]), ($tp1[2] + $tp2[2]));
+		$nn = $materRefrac / $worldRefrac;
+		if( (1 - (($nn ** 2) * ($dn ** 2))) >= 0){
+			my $p1 = ($nn * $dn) - sqrt((1 - (($nn ** 2) * ($dn ** 2))));
+			@tran = ((($p1 * $norm[0]) - ($nn * $eyeV[0])), (($p1 * $norm[1]) - ($nn * $eyeV[1])), (($p1 * $norm[2]) - ($nn * $eyeV[2])));
+			$tranRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $tran[0]), ($intPoint[1] + $tran[1]), ($intPoint[2] + $tran[2]));
 		}
-	}else{
-		@tran = @eyeV;
 	}
-	
-	$tranRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $tran[0]), ($intPoint[1] + $tran[1]), ($intPoint[2] + $tran[2]));
-	
 	# Find object of interest
 	my $newT = 0;
 	my $closestT = -1;
@@ -212,7 +198,83 @@ sub refract {
 			}
 		}
 	}
+	# Grab the color!
+	if( $closestT > 0 ){
+		# If we have an intersection behind the image plane, draw it.
+		return $closestObj->getColor($closestT, $bounces, $tranRay, $castor);
+	}else{
+		# If there's no intersection, use the default background color.
+		return $castor->{_background};
+	}
 	
+}
+
+sub refractOld {
+	my $self = $_[0];
+	my @eyeV = @{$_[1]};
+	my @norm = @{$_[2]};
+	my @intPoint = @{$_[3]};
+	my $worldRefrac = $_[4];
+	my $materRefrac = $_[5];
+	my $castor = $_[6];
+	my $bounces = $_[7] - 1;
+	
+	if($bounces == 0){
+		return $castor->{_background};
+	}
+
+	# Calculate the translated ray
+	my $dn = -1 * (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
+	my @tran = @eyeV;
+	my $N = $worldRefrac / $materRefrac;
+	if((1 - ($N ** 2) * (1 - ($dn ** 2))) > 0){
+		my $tpd2 = $N * $dn - sqrt(1 - ($N ** 2) * (1 - ($dn ** 2)));
+		my @tp2 = (($norm[0] * $tpd2), ($norm[1] * $tpd2), ($norm[2] * $tpd2));
+		my @tp1 = (($eyeV[0] * $N), ($eyeV[1] * $N), ($eyeV[2] * $N));
+		@tran = (($tp1[0] + $tp2[0]), ($tp1[1] + $tp2[1]), ($tp1[2] + $tp2[2]));
+		if($tran[0] == 0 && $tran[1] == 0 && $tran [2] == 0){
+			@tran = @eyeV;
+		}
+	}
+	
+	# Create the actual ray
+	my $tranRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $tran[0]), ($intPoint[1] + $tran[1]), ($intPoint[2] + $tran[2]));
+
+	# Get if we intersect ourselves.
+	my $selfT = $self->intersectsT($tranRay);
+	
+	# Calculate the ray we launch.
+	if($selfT > 0){
+		@intPoint = @{$tranRay->getPoint($selfT)};
+		$dn = (($eyeV[0] * $norm[0]) + ($eyeV[1] * $norm[1]) + ($eyeV[2] * $norm[2]));
+		$N = $materRefrac / $worldRefrac;
+		if((1 - ($N ** 2) * (1 - ($dn ** 2))) > 0){
+			$tpd2 = $N * $dn - sqrt(1 - ($N ** 2) * (1 - ($dn ** 2)));
+			@tp2 = (($norm[0] * $tpd2), ($norm[1] * $tpd2), ($norm[2] * $tpd2));
+			@tp1 = (($eyeV[0] * $N), ($eyeV[1] * $N), ($eyeV[2] * $N));
+			@tran = (($tp1[0] + $tp2[0]), ($tp1[1] + $tp2[1]), ($tp1[2] + $tp2[2]));
+			if($tran[0] == 0 && $tran[1] == 0 && $tran [2] == 0){
+				@tran = @eyeV;
+			}
+		}
+	}else{
+		@tran = @eyeV;
+	}
+	
+	$tranRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $tran[0]), ($intPoint[1] + $tran[1]), ($intPoint[2] + $tran[2]));
+	# Find object of interest
+	my $newT = 0;
+	my $closestT = -1;
+	my $closestObj = undef;
+	foreach $curObj (@{$castor->{_kmobjs}}){
+		if(!($self->equals($curObj))){
+			$newT = $curObj->intersects($tranRay); # Get the current distance
+			if( $closestT < 0 || ($closestT > $newT && !($newT <= 0)) ){ # See if it's the first item or a closer one
+				$closestT = $newT; # Get the current T
+				$closestObj = $curObj; # Record the closest object.
+			}
+		}
+	}
 	# Grab the color!
 	if( $closestT > 0 ){
 		# If we have an intersection behind the image plane, draw it.

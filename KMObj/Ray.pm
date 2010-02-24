@@ -10,9 +10,9 @@ sub new {
 	my ($class, $xO, $yO, $zO, $xU, $yU, $zU) = @_; #extract args
 	
 	# Get the vector from origin to other point
-	$xT = $xU - $xO;
-	$yT = $yU - $yO;
-	$zT = $zU - $zO;
+	my $xT = $xU - $xO;
+	my $yT = $yU - $yO;
+	my $zT = $zU - $zO;
 	
 	# Normalize the vector...
 	my $divBy = sqrt( ( $xT ** 2 ) + ( $yT ** 2 ) + ( $zT ** 2 ) );

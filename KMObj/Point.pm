@@ -152,6 +152,12 @@ sub lightIn {
 	my $newT = 0;
 	my $closestT = -1;
 	my $closestObj = undef;
+	
+	# In case we place the light on the intersection point of a object
+	if($intPoint[0] == ($intPoint[0] + $light[0]) && $intPoint[1] == ($intPoint[1] + $light[1]) && $intPoint[2] == ($intPoint[2] + $light[2])){
+		return [1, 1, 1];
+	}
+	
 	my $shadowRay = new Ray($intPoint[0], $intPoint[1], $intPoint[2], ($intPoint[0] + $light[0]), ($intPoint[1] + $light[1]), ($intPoint[2] + $light[2]));
 	
 	foreach $curObj (@{$castor->{_kmobjs}}){
@@ -230,7 +236,7 @@ sub reflect {
 	}
 }
 
-sub refract {
+sub refractO {
 	my $self = $_[0];
 	my @eyeV = @{$_[1]};
 	my @norm = @{$_[2]};
